@@ -1,0 +1,57 @@
+# Rundeck Docker Compose
+# Author: Sergio Rodriguez <sergio.rodriguez@cbba.cloud.org.bo>
+# GitHub: https://github.com/Walsen
+# Blog: https://blog.walsen.website
+# Date: 2026-01-28
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: rundeck-postgres
+    environment:
+      POSTGRES_DB: rundeck
+      POSTGRES_USER: rundeck
+      POSTGRES_PASSWORD: rundeck123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rundeck-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rundeck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rundeck:
+    build:
+      context: .
+      args:
+        RUNDECK_VERSION: ${RUNDECK_VERSION:-5.15.0}
+    container_name: rundeck
+    ports:
+      - "8080:80"
+    environment:
+      RUNDECK_GRAILS_URL: ${RUNDECK_GRAILS_URL:-http://localhost:8080}
+      RUNDECK_DATABASE_DRIVER: org.postgresql.Driver
+      RUNDECK_DATABASE_USERNAME: rundeck
+      RUNDECK_DATABASE_PASSWORD: rundeck123
+      RUNDECK_DATABASE_URL: jdbc:postgresql://postgres:5432/rundeck
+    volumes:
+      - rundeck_data:/home/rundeck/server/data
+      - rundeck_logs:/home/rundeck/var/logs
+      - ./config/realm.properties:/home/rundeck/etc/realm.properties:ro
+      - ./config/rundeck-site.conf:/etc/nginx/sites-available/rundeck.conf:ro
+    networks:
+      - rundeck-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  rundeck_data:
+  rundeck_logs:
+
+networks:
+  rundeck-network:
+    driver: bridge
