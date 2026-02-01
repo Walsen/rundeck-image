@@ -133,15 +133,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Update Docker Hub description
-        uses: peter-evans/dockerhub-description@v4
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ env.DOCKERHUB_IMAGE }}
-          readme-filepath: ./DOCKERHUB.md
-          short-description: "Rundeck with Nginx reverse proxy and pre-installed plugins"
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
