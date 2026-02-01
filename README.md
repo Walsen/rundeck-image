@@ -74,7 +74,7 @@ docker run -p 9000:80 -e RUNDECK_GRAILS_URL=http://localhost:9000 ffactory/runde
 
 | Argument | Default | Description |
 |----------|---------|-------------|
-| `RUNDECK_VERSION` | `5.15.0` | Rundeck version to use |
+| `RUNDECK_VERSION` | `5.18.0` | Rundeck version to use |
 
 ### Environment Variables
 

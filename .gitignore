@@ -4,6 +4,9 @@
 .env.*.local
 .env.keycloak
 
+# Devbox
+.devbox/
+
 # Docker volumes and data
 postgres_data/
 rundeck_data/
