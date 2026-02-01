@@ -1,5 +1,9 @@
 # Rundeck Docker Image
 
+[![Build Rundeck Image](https://github.com/Walsen/rundeck-image/actions/workflows/build.yml/badge.svg)](https://github.com/Walsen/rundeck-image/actions/workflows/build.yml)
+[![Docker Hub](https://img.shields.io/docker/v/ffactory/rundeck?label=Docker%20Hub&sort=semver)](https://hub.docker.com/r/ffactory/rundeck)
+[![Docker Pulls](https://img.shields.io/docker/pulls/ffactory/rundeck)](https://hub.docker.com/r/ffactory/rundeck)
+
 Custom Rundeck Docker image with Nginx reverse proxy and Supervisor process management.
 
 **Author:** Sergio Rodriguez <sergio.rodriguez@cbba.cloud.org.bo>  
