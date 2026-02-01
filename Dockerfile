@@ -2,9 +2,9 @@
 # Author: Sergio Rodriguez <sergio.rodriguez@cbba.cloud.org.bo>
 # GitHub: https://github.com/Walsen
 # Blog: https://blog.walsen.website
-# Date: 2026-01-28
+# Date: 2026-01-31
 
-ARG RUNDECK_VERSION=5.15.0
+ARG RUNDECK_VERSION=5.18.0
 FROM rundeck/rundeck:${RUNDECK_VERSION}
 
 USER root
@@ -14,7 +14,15 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     nginx \
     supervisor \
+    curl \
+    jq \
     && rm -rf /var/lib/apt/lists/*
+
+# Install rundeck-node-to-node plugin (latest version)
+RUN PLUGIN_URL=$(curl -s https://api.github.com/repos/Walsen/rundeck-node-to-node/releases/latest | \
+    jq -r '.assets[] | select(.name | endswith(".jar")) | .browser_download_url') && \
+    curl -L -o /home/rundeck/libext/rundeck-node-to-node.jar "$PLUGIN_URL" && \
+    chown rundeck:root /home/rundeck/libext/rundeck-node-to-node.jar
 
 # Setup nginx directories
 RUN mkdir -p /etc/nginx/sites-enabled /etc/nginx/ssl

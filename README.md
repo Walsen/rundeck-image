@@ -1,11 +1,15 @@
 # Rundeck Docker Image
 
+[![Build Rundeck Image](https://github.com/Walsen/rundeck-image/actions/workflows/build.yml/badge.svg)](https://github.com/Walsen/rundeck-image/actions/workflows/build.yml)
+[![Docker Hub](https://img.shields.io/docker/v/ffactory/rundeck?label=Docker%20Hub&sort=semver)](https://hub.docker.com/r/ffactory/rundeck)
+[![Docker Pulls](https://img.shields.io/docker/pulls/ffactory/rundeck)](https://hub.docker.com/r/ffactory/rundeck)
+
 Custom Rundeck Docker image with Nginx reverse proxy and Supervisor process management.
 
 **Author:** Sergio Rodriguez <sergio.rodriguez@cbba.cloud.org.bo>  
 **GitHub:** https://github.com/Walsen  
 **Blog:** https://blog.walsen.website  
-**Date:** 2026-01-28
+**Date:** 2026-01-31
 
 ## Architecture
 
@@ -30,6 +34,14 @@ flowchart LR
     Nginx -->|"proxy_pass"| Rundeck
     Rundeck -->|"JDBC"| Postgres
 ```
+
+## Features
+
+- **Nginx Reverse Proxy**: Flexible port mapping with automatic configuration
+- **Supervisor Process Management**: Reliable multi-process container
+- **PostgreSQL Support**: Production-ready database backend
+- **Pre-installed Plugins**:
+  - [rundeck-node-to-node](https://github.com/Walsen/rundeck-node-to-node): Node-to-node file copy plugin (automatically updated to latest version)
 
 ## Quick Start
 
@@ -62,7 +74,7 @@ docker run -p 9000:80 -e RUNDECK_GRAILS_URL=http://localhost:9000 ffactory/runde
 
 | Argument | Default | Description |
 |----------|---------|-------------|
-| `RUNDECK_VERSION` | `5.15.0` | Rundeck version to use |
+| `RUNDECK_VERSION` | `5.18.0` | Rundeck version to use |
 
 ### Environment Variables
 

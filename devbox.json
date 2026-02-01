@@ -4,7 +4,8 @@
     "trivy@latest",
     "hadolint@latest",
     "htop@latest",
-    "jq@latest"
+    "jq@latest",
+    "gh@latest"
   ],
   "shell": {
     "init_hook": ["echo 'Welcome to Walsen's Rundeck!'"],

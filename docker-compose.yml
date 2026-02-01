@@ -2,7 +2,7 @@
 # Author: Sergio Rodriguez <sergio.rodriguez@cbba.cloud.org.bo>
 # GitHub: https://github.com/Walsen
 # Blog: https://blog.walsen.website
-# Date: 2026-01-28
+# Date: 2026-01-31
 
 services:
   postgres:
@@ -26,7 +26,7 @@ services:
     build:
       context: .
       args:
-        RUNDECK_VERSION: ${RUNDECK_VERSION:-5.15.0}
+        RUNDECK_VERSION: ${RUNDECK_VERSION:-5.18.0}
     container_name: rundeck
     ports:
       - "8080:80"

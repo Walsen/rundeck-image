@@ -3,7 +3,7 @@
 # Author: Sergio Rodriguez <sergio.rodriguez@cbba.cloud.org.bo>
 # GitHub: https://github.com/Walsen
 # Blog: https://blog.walsen.website
-# Date: 2026-01-28
+# Date: 2026-01-31
 set -e
 
 # Remove default nginx site and enable rundeck
