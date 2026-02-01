@@ -132,3 +132,38 @@ jobs:
             RUNDECK_VERSION=${{ needs.get-version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ env.DOCKERHUB_IMAGE }}
+          readme-filepath: ./DOCKERHUB.md
+          short-description: "Rundeck with Nginx reverse proxy and pre-installed plugins"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.get-version.outputs.full_version }}
+          name: v${{ needs.get-version.outputs.full_version }}
+          body: |
+            ## Docker Image Release
+
+            **Rundeck Version:** ${{ needs.get-version.outputs.version }}
+            **Image Version:** ${{ needs.get-version.outputs.image_version }}
+            **Plugin Version:** ${{ needs.get-version.outputs.plugin_version }}
+
+            ### Docker Pull
+            ```bash
+            docker pull ffactory/rundeck:${{ needs.get-version.outputs.full_version }}
+            ```
+
+            ### What's Included
+            - Rundeck ${{ needs.get-version.outputs.version }}
+            - Nginx reverse proxy
+            - Supervisor process management
+            - rundeck-node-to-node plugin ${{ needs.get-version.outputs.plugin_version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
