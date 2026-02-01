@@ -1,0 +1,63 @@
+# Rundeck Release Monitor
+# Author: Sergio Rodriguez <sergio.rodriguez@cbba.cloud.org.bo>
+# GitHub: https://github.com/Walsen
+# Blog: https://blog.walsen.website
+# Date: 2026-01-31
+#
+# Monitors official Rundeck releases and triggers a build when a new version is detected
+
+name: Check Rundeck Release
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get latest Rundeck version
+        id: rundeck
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/rundeck/rundeck/releases/latest | jq -r '.tag_name' | sed 's/^v//')
+          echo "version=$LATEST" >> $GITHUB_OUTPUT
+          echo "Latest Rundeck version: $LATEST"
+
+      - name: Get last built version
+        id: built
+        run: |
+          # Check if we have a release for this Rundeck version
+          RELEASES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases" | \
+            jq -r '.[].tag_name' | grep "^v${{ steps.rundeck.outputs.version }}" | head -1 || echo "")
+          
+          if [ -n "$RELEASES" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Found existing release: $RELEASES"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No release found for Rundeck ${{ steps.rundeck.outputs.version }}"
+          fi
+
+      - name: Trigger build for new version
+        if: steps.built.outputs.exists == 'false'
+        run: |
+          echo "🚀 New Rundeck version detected: ${{ steps.rundeck.outputs.version }}"
+          echo "Triggering build workflow..."
+          
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/build.yml/dispatches" \
+            -d '{"ref":"main","inputs":{"rundeck_version":"${{ steps.rundeck.outputs.version }}"}}'
+          
+          echo "✅ Build triggered for Rundeck ${{ steps.rundeck.outputs.version }}"
+
+      - name: No new version
+        if: steps.built.outputs.exists == 'true'
+        run: |
+          echo "✓ Already have a release for Rundeck ${{ steps.rundeck.outputs.version }}"
