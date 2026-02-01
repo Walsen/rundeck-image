@@ -26,7 +26,7 @@ services:
     build:
       context: .
       args:
-        RUNDECK_VERSION: ${RUNDECK_VERSION:-5.15.0}
+        RUNDECK_VERSION: ${RUNDECK_VERSION:-5.18.0}
     container_name: rundeck
     ports:
       - "8080:80"

@@ -4,7 +4,7 @@
 # Blog: https://blog.walsen.website
 # Date: 2026-01-31
 
-ARG RUNDECK_VERSION=5.15.0
+ARG RUNDECK_VERSION=5.18.0
 FROM rundeck/rundeck:${RUNDECK_VERSION}
 
 USER root

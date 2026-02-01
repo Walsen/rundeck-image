@@ -28,8 +28,13 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      image_version: ${{ steps.image.outputs.version }}
+      full_version: ${{ steps.image.outputs.full_version }}
       plugin_version: ${{ steps.plugin.outputs.version }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Get latest Rundeck version
         id: version
         run: |
@@ -39,7 +44,18 @@ jobs:
             VERSION=$(curl -s https://api.github.com/repos/rundeck/rundeck/releases/latest | jq -r '.tag_name' | sed 's/^v//')
             echo "version=$VERSION" >> $GITHUB_OUTPUT
           fi
-      
+
+      - name: Get image version
+        id: image
+        run: |
+          IMAGE_VERSION=$(cat VERSION | tr -d '[:space:]')
+          RUNDECK_VERSION="${{ steps.version.outputs.version }}"
+          FULL_VERSION="${RUNDECK_VERSION}-${IMAGE_VERSION}"
+          echo "version=$IMAGE_VERSION" >> $GITHUB_OUTPUT
+          echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
+          echo "Image version: $IMAGE_VERSION"
+          echo "Full version: $FULL_VERSION"
+
       - name: Get latest plugin version
         id: plugin
         run: |
@@ -101,6 +117,7 @@ jobs:
         with:
           images: ${{ env.DOCKERHUB_IMAGE }}
           tags: |
+            type=raw,value=${{ needs.get-version.outputs.full_version }}
             type=raw,value=${{ needs.get-version.outputs.version }}
             type=raw,value=latest
 
