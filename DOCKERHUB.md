@@ -49,6 +49,47 @@ docker run -p 80:80 -e RUNDECK_GRAILS_URL=http://localhost ffactory/rundeck
 docker run -p 9000:80 -e RUNDECK_GRAILS_URL=http://localhost:9000 ffactory/rundeck
 ```
 
+## Docker Compose Example
+
+```yaml
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: rundeck
+      POSTGRES_USER: rundeck
+      POSTGRES_PASSWORD: rundeck123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rundeck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rundeck:
+    image: ffactory/rundeck:latest
+    ports:
+      - "8080:80"
+    environment:
+      RUNDECK_GRAILS_URL: http://localhost:8080
+      RUNDECK_DATABASE_DRIVER: org.postgresql.Driver
+      RUNDECK_DATABASE_USERNAME: rundeck
+      RUNDECK_DATABASE_PASSWORD: rundeck123
+      RUNDECK_DATABASE_URL: jdbc:postgresql://postgres:5432/rundeck
+    volumes:
+      - rundeck_data:/home/rundeck/server/data
+      - rundeck_logs:/home/rundeck/var/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  rundeck_data:
+  rundeck_logs:
+```
+
 ## Source & Documentation
 
 - **GitHub:** https://github.com/Walsen/rundeck-image
